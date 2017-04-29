@@ -159,6 +159,12 @@ $(function() {
         // hint: https://bl.ocks.org/mbostock/3883245
 
 
+        var line = d3.line()
+            .x(function(d) { return xScale(+d.year); })
+            .y(function(d) { return yScale(+d.value); });
+
+
+        
 
 
         /* ********************************** Function for drawing lines  ********************************** */
@@ -166,19 +172,65 @@ $(function() {
         // function for drawing graph
         function draw(data) {
             // Set your scales and axes
+            setScales();
+            setAxes();
 
 
             // Do a datajoin between your path elements and the data passed to the draw function
             // Make sure to set the identifying key
 
+            var countries = g.selectAll('.countries')
+                .data(data, function(d) { return d.key; });
+            
+
+            function getLength() {
+                d3.select(this).node().getTotalLength();
+            }
+            
 
             // Handle entering elements (see README.md)
-
+            countries.enter()
+                .append('path')
+                .attr('class', 'countries')
+                .attr("fill", "none")
+                .attr("d", function(d) {return line(d.values)})
+                .attr("stroke", function(d) { return colorScale(d.key); })
+                .attr("stroke-linejoin", "round")
+                .attr("stroke-linecap", "round")
+                .attr("stroke-width", 1.5)
+                .attr('stroke-dasharray',  function(d) {
+                    var totalLength = d3.select(this).node().getTotalLength();
+                    return (totalLength + " " + totalLength);
+                })
+                .attr("stroke-dashoffset", function(d) {
+                    return -d3.select(this).node().getTotalLength();
+                })
+                .transition()
+                .duration(2000)
+                .attr("stroke-dashoffset", function(d) {
+                    return 0;
+                });
+                
 
             // Handle updating elements (see README.md)
-
+            countries.attr("stroke-dasharray", "none")
+                .attr("stroke", function(d) { return colorScale(d.key); })
+                .transition()
+                .duration(2000)
+                .attr("d", function(d) { return line(d.values) });
 
             // Handle exiting elements (see README.md)
+            countries.exit()
+                .transition()
+                .duration(2000)
+                .attr("stroke-dashoffset", function(d) {
+                    return -d3.select(this).node().getTotalLength();
+                })
+                .attr("stroke-dasharray", function(d) {
+                    var totalLength = d3.select(this).node().getTotalLength();
+                    return (totalLength + " " + totalLength);
+                })
+                .remove();
 
         }
 
