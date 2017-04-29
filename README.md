@@ -1,3 +1,6 @@
+https://chowicus.github.io/tp4-interactivity-page/
+
+
 # tp4-interactivity
 
 For the fourth technical progress check-in, you'll be using the [D3](https://d3js.org/) framework to create an interactive multi-series line chart. In doing so, you'll demonstrate a strong familiarity with the following skills:
